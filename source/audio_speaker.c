@@ -195,12 +195,6 @@ usb_audio_speaker_struct_t g_UsbDeviceAudioSpeaker = {
 #endif
 };
 
-/* USB device class information */
-static usb_device_class_config_struct_t s_audioConfig[1] = {{
-    USB_DeviceAudioCallback,
-    (class_handle_t)NULL,
-    &g_UsbDeviceAudioClass,
-}};
 
 
 /*******************************************************************************
@@ -316,17 +310,17 @@ void Init_Board_Audio(void)
 
     BOARD_USB_Audio_TxInit(AUDIO_SAMPLING_RATE);
     BOARD_Codec_Init();
-    printf("init");
+    printf("\n init");
 
-    	status_t status = CODEC_SetPlay(codecHandle, kCODEC_PlaySourcePGA);
-    	printf("play");
+    	status_t status = CODEC_SetPlay(codecHandle, kCODEC_PlaySourceDAC);
+    	printf("\n play");
     	if(status==kStatus_Success){
-    		printf("success");
+    		printf("\n success");
     	}
     	else{
-    		printf("failed");
+    		printf("\n failed");
     	}
-
+/*
     	CODEC_SetPower(codecHandle, kCODEC_ModuleDAC, true);
     	CODEC_SetPower(codecHandle, kCODEC_ModuleADC, true);
     	CODEC_SetPower(codecHandle, kCODEC_ModuleMxier, true);
@@ -344,11 +338,34 @@ void Init_Board_Audio(void)
     	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft0, false);
     	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft1, false);
     	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft2, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft3, false);
+    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft3, false);/*
 
     BOARD_DMA_EDMA_Config();
     BOARD_Create_Audio_DMA_EDMA_Handle();
     BOARD_DMA_EDMA_Start();
+
+    	/*
+    WM8904_EnableADCTDMMode(codecHandle,  kWM8904_TimeSlot0);
+    WM8904_EnableDACTDMMode(codecHandle,  kWM8904_TimeSlot0);
+    */
+	printf("\n DAC ENABLE");
+
+
+    //Enable ADC and DAC (L&R channels)
+    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x12 , 0xF);
+
+
+    //Set Max Volume and route to DAC
+    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x20 , 0xFF6);
+	printf("\n ENABLED");
+
+    //Enable EQ
+    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x86 , 1);
+
+    //EQ Band 1 @+12db
+    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x87 , 0x18);
+
+
 
 }
 

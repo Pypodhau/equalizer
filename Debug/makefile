@@ -42,25 +42,25 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: lpcxpresso55s69_dev_audio_speaker_freertos.axf
+all: equalizer.axf
 
 # Tool invocations
-lpcxpresso55s69_dev_audio_speaker_freertos.axf: $(OBJS) $(USER_OBJS)
+equalizer.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"/home/fenwick/Documents/MCUXpresso_11.1.1_3241/workspace/lpcxpresso55s69_dev_audio_speaker_freertos/libs" -Xlinker -Map="lpcxpresso55s69_dev_audio_speaker_freertos.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -T lpcxpresso55s69_dev_audio_speaker_freertos_Debug.ld -o "lpcxpresso55s69_dev_audio_speaker_freertos.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"/home/fenwick/Documents/MCUXpresso_11.1.1_3241/workspace/equalizer/libs" -Xlinker -Map="equalizer.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -T "equalizer_Debug.ld" -o "equalizer.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) lpcxpresso55s69_dev_audio_speaker_freertos.axf
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) equalizer.axf
 	-@echo ' '
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "lpcxpresso55s69_dev_audio_speaker_freertos.axf"; # arm-none-eabi-objcopy -v -O binary "lpcxpresso55s69_dev_audio_speaker_freertos.axf" "lpcxpresso55s69_dev_audio_speaker_freertos.bin" ; # checksum -p LPC55S69 -d "lpcxpresso55s69_dev_audio_speaker_freertos.bin";
+	-arm-none-eabi-size "equalizer.axf"; # arm-none-eabi-objcopy -v -O binary "equalizer.axf" "equalizer.bin" ; # checksum -p LPC55S69 -d "equalizer.bin";
 	-@echo ' '
 
 .PHONY: all clean dependents post-build
