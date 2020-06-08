@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
+ * Copyright 2016 - 2017,2019 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "usb_device_config.h"
+#include "usb.h"
+#include "usb_device.h"
+#include "usb_device_class.h"
+#include "usb_device_audio.h"
+
+#include "usb_device_ch9.h"
+#include "usb_device_descriptor.h"
+
+#include "audio_speaker.h"
+#include "fsl_device_registers.h"
+#include "clock_config.h"
+#include "board.h"
+#include "fsl_debug_console.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "pin_mux.h"
+#include "fsl_i2c.h"
+#include "fsl_i2s.h"
+#include "fsl_i2s_dma.h"
+#include "fsl_codec_common.h"
+#include "fsl_wm8904.h"
+#include "fsl_codec_adapter.h"
+#include "fsl_power.h"
+
+#define DEMO_I2S_MASTER_CLOCK_FREQUENCY (24576000)
+
+
+uint8_t codecHandleBuffer[CODEC_HANDLE_SIZE] = {0U};
+wm8904_config_t wm8904Config = {
+    .i2cConfig    = {.codecI2CInstance = BOARD_CODEC_I2C_INSTANCE, .codecI2CSourceClock = BOARD_CODEC_I2C_CLOCK_FREQ},
+    .recordSource = kWM8904_RecordSourceLineInput,
+    .recordChannelLeft  = kWM8904_RecordChannelLeft2,
+    .recordChannelRight = kWM8904_RecordChannelRight2,
+    .playSource         = kWM8904_PlaySourceDAC,
+    .slaveAddress       = WM8904_I2C_ADDRESS,
+    .protocol           = kWM8904_ProtocolI2S,
+    .format             = {.sampleRate = kWM8904_SampleRate48kHz, .bitWidth = kWM8904_BitWidth16},
+    .mclk_HZ            = DEMO_I2S_MASTER_CLOCK_FREQUENCY,
+    .master             = false,
+};
+
+
+
+codec_handle_t *codecHandle                  = (codec_handle_t *)codecHandleBuffer;
+codec_config_t boardCodecConfig              = {.codecDevType = kCODEC_WM8904, .codecDevConfig = &wm8904Config};
+
+void BOARD_Codec_Init()
+{
+    CODEC_Init(codecHandle, &boardCodecConfig);
+    CODEC_SetVolume(codecHandle, kCODEC_PlayChannelHeadphoneLeft | kCODEC_PlayChannelHeadphoneRight, 0x0020);
+
+}
+
+int main(void){
+	printf("start");
+	BOARD_Codec_Init();
+	printf("init");
+
+	status_t status = HAL_CODEC_SetPlay(codecHandle, kCODEC_PlaySourcePGA);
+	printf("play");
+	printf(status);
+	if(status==kStatus_Success){
+		printf("success");
+	}
+	else{
+		printf("failed");
+	}
+
+	HAL_CODEC_SetPower(codecHandle, kCODEC_ModulePGA, true);
+
+	return 1;
+	HAL_CODEC_SetPower(codecHandle, kCODEC_ModuleHeadphone, true);
+	HAL_CODEC_SetPower(codecHandle, kCODEC_ModuleSpeaker, true);
+	HAL_CODEC_SetPower(codecHandle, kCODEC_ModuleLinein, true);
+	HAL_CODEC_SetPower(codecHandle, kCODEC_ModuleLineout, true);
+
+
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelLineOutLeft, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelSpeakerLeft, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelHeadphoneLeft, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft0, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft1, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft2, false);
+	HAL_CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft3, false);
+
+
+
+	return 1;
+
+
+}
+
+
