@@ -14,5 +14,5 @@ audio_speaker.c:281:6:BOARD_DMA_EDMA_Config	8	static
 audio_speaker.c:289:6:BOARD_Create_Audio_DMA_EDMA_Handle	8	static
 audio_speaker.c:294:6:BOARD_DMA_EDMA_Start	16	static
 audio_speaker.c:307:6:Init_Board_Audio	16	static
-audio_speaker.c:381:6:APPTask	16	static
-audio_speaker.c:388:5:main	48	static
+audio_speaker.c:345:6:APPTask	16	static
+audio_speaker.c:352:5:main	48	static

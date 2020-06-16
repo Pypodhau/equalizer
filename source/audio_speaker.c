@@ -306,49 +306,13 @@ void BOARD_DMA_EDMA_Start()
 /*Initialize audio interface and codec.*/
 void Init_Board_Audio(void)
 {
-    usb_echo("Init Audio I2S and CODEC\r\n");
 
     BOARD_USB_Audio_TxInit(AUDIO_SAMPLING_RATE);
     BOARD_Codec_Init();
-    printf("\n init");
+    printf("\n Init Codec");
 
-    	status_t status = CODEC_SetPlay(codecHandle, kCODEC_PlaySourceDAC);
-    	printf("\n play");
-    	if(status==kStatus_Success){
-    		printf("\n success");
-    	}
-    	else{
-    		printf("\n failed");
-    	}
-/*
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleDAC, true);
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleADC, true);
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleMxier, true);
+    status_t status = CODEC_SetPlay(codecHandle, kCODEC_PlaySourceDAC);
 
-
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleHeadphone, true);
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleSpeaker, true);
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleLinein, true);
-    	CODEC_SetPower(codecHandle, kCODEC_ModuleLineout, true);
-
-
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelSpeakerLeft, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelHeadphoneLeft, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLineOutLeft, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft0, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft1, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft2, false);
-    	CODEC_SetMute(codecHandle, kCODEC_PlayChannelLeft3, false);/*
-
-    BOARD_DMA_EDMA_Config();
-    BOARD_Create_Audio_DMA_EDMA_Handle();
-    BOARD_DMA_EDMA_Start();
-
-    	/*
-    WM8904_EnableADCTDMMode(codecHandle,  kWM8904_TimeSlot0);
-    WM8904_EnableDACTDMMode(codecHandle,  kWM8904_TimeSlot0);
-    */
-	printf("\n DAC ENABLE");
 
 
     //Enable ADC and DAC (L&R channels)
@@ -357,13 +321,13 @@ void Init_Board_Audio(void)
 
     //Set Max Volume and route to DAC
     WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x20 , 0xFF6);
-	printf("\n ENABLED");
+	printf("\n DAC ENABLED");
 
     //Enable EQ
     WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x86 , 1);
 
-    //EQ Band 1 @+12db
-    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x87 , 0x18);
+    //EQ Band 1 @+7db
+    WM8904_WriteRegister((wm8904_handle_t *)((uint32_t)(codecHandle->codecDevHandle)), 0x87 , 0x13);
 
 
 
